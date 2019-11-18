@@ -31,6 +31,7 @@ exports.activate = async context => {
   const workspaceUrl = config.get('workspaceUrl')
   const email = config.get('user.email')
   const apiKey = config.get('user.apiKey')
+  const includeTitle = config.get('includeTitle')
 
   if (!workspaceUrl || !email || !apiKey) {
     workspace.showMessage(
@@ -51,17 +52,36 @@ exports.activate = async context => {
     console.error('Failed to fetch JIRA issues: ', error)
   }
 
-  let source = {
-    name: 'jira-complete',
-    triggerOnly: false,
-    doComplete: async () => {
-      return {
-        items: issues.map(issue => {
-          return {
-            word: issue.key,
-            abbr: `${issue.key} ${issue.title}`
-          }
-        })
+
+  let source = {}
+  if (includeTitle) {
+    source = {
+      name: 'jira-complete',
+      triggerOnly: false,
+      doComplete: async () => {
+        return {
+          items: issues.map(issue => {
+            return {
+              word: `${issue.key}: ${issue.title}`,
+              abbr: `${issue.key}: ${issue.title}`
+            }
+          })
+        }
+      }
+    }
+  } else {
+    source = {
+      name: 'jira-complete',
+      triggerOnly: false,
+      doComplete: async () => {
+        return {
+          items: issues.map(issue => {
+            return {
+              word: `${issue.key}`,
+              abbr: `${issue.key}: ${issue.title}`
+            }
+          })
+        }
       }
     }
   }

@@ -37,6 +37,11 @@
           "type": "string",
           "default": "",
           "description": "JIRA user api key, get one from id.atlassian.com/manage/api-tokens"
+        },
+        "jira.includeTitle": {
+          "type": "boolean",
+          "default": "false",
+          "description": "Autocomplete the title with the JIRA #"
         }
       }
     }
